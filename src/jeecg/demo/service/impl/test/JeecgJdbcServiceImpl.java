@@ -748,4 +748,24 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 		JSONObject jObject = JSONObject.fromObject(jsonTemp);
 		return jObject;
 	}
+
+	/***** Upd By ZM 20170922 增加重复记录check start******/		
+	/******/
+	@Override
+	public Boolean checkDuplicate(String name, String ksdate, String jsdate) {
+		Boolean boolRtn = true;
+		String sqlWhere = " z.name = '" + name + "' and ";
+		sqlWhere += " ((z.ksdate <= '" + ksdate + "'";
+		sqlWhere += " and z.jsdate >= '" + ksdate + "') or";
+		sqlWhere += " (z.ksdate <= '" + ksdate + "'";
+		sqlWhere += " and z.jsdate >= '" + ksdate + "'))";
+
+		// 取出总数据条数（为了分页处理, 如果不用分页，取iCount值的这个处理可以不要）
+		String sqlCnt = "select count(*) from z_s_zzc t ";
+			   sqlCnt += " where" + sqlWhere;
+		Long iCount = getCountForJdbc(sqlCnt);
+		if (iCount == 0) {boolRtn = false;}		
+		return boolRtn;
+	}
+	/***** Upd By ZM 20170922 增加重复记录check end******/	
 }

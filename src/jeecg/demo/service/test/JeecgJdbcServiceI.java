@@ -19,4 +19,5 @@ public interface JeecgJdbcServiceI extends CommonService{
 	public JSONObject getZzcDatagridylj1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 	public JSONObject getZzcDatagridwlj1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 	public JSONObject getZzcDatagridhz1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
+	public Boolean checkDuplicate(String name,String ksdate, String jsdate);
 }

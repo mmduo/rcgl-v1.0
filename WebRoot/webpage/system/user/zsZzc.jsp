@@ -65,12 +65,9 @@
        <c:forEach items="${bzgzlList}" var="bzgzl">
        <c:set var="itemStr" value="${bzgzl.typename}"/>
        <input datatype="*" name="bzgzl" class="rt2" id="bzgzl+${bzgzl.typecode}" type="checkbox"  value="${bzgzl.typename}"
-       <c:if test="${fn:contains(sources,itemStr)}">checked="checked"</c:if>
-       <c:if test="${itemStr=='其他'}">onclick="OtherBzgzlClick(this)"</c:if>/>  
+       <c:if test="${fn:contains(sources,itemStr)}">checked="checked"</c:if>/>  
        <label for="bzgzl+${bzgzl.typecode}">${bzgzl.typename}</label>
        </c:forEach>
-       <input id="bzgzltxt" class="inputxt" name="bzgzl" value="${OtherBzgzlTxt}"
-       <c:if test="${OtherBzgzlFlag}">disabled="true"</c:if>/>
        <span class="Validform_checktip">必填</span>
      </td>
      <!-- Upd By ZM 20170918 input改为 checkbox End-->
@@ -159,12 +156,9 @@
        <c:forEach items="${cxtypeList}" var="cxtype">
        <c:set var="itemStr" value="${cxtype.typename}"/>
        <input datatype="*" name="cxtype" class="rt2" id="cxtype+${cxtype.typecode}" type="checkbox"  value="${cxtype.typename}"
-       <c:if test="${fn:contains(sources,itemStr)}">checked="checked"</c:if>
-       <c:if test="${itemStr=='其他'}">onclick="OtherCxtypeClick(this)"</c:if>/>  
+       <c:if test="${fn:contains(sources,itemStr)}">checked="checked"</c:if>/>  
        <label for="cxtype+${cxtype.typecode}">${cxtype.typename}</label>
        </c:forEach>
-       <input id="cxtypetxt" class="inputxt" name="cxtype" value="${OtherCxtypeTxt}"
-       <c:if test="${OtherCxtypeFlag}">disabled="true"</c:if>/>
        <span class="Validform_checktip">必填</span>
      </td>
      <!-- Upd By ZM 20170918 input改为 checkbox End-->
@@ -183,25 +177,3 @@
    </div>
   </t:formvalid>
  </body>
-<!-- Add By ZM 20170918 input改为 checkbox Start-->
-<script language="javascript">
-	function OtherBzgzlClick(obj)
-	{
-		if(obj.checked){
-			bzgzltxt.disabled=false;		
-		}else{
-			bzgzltxt.disabled=true;
-			bzgzltxt.value="";
-		}
-	}
-	function OtherCxtypeClick(obj)
-	{
-		if(obj.checked){
-			cxtypetxt.disabled=false;	
-		}else{
-			cxtypetxt.disabled=true;
-			cxtypetxt.value="";
-		}
-	}
-</script>
-<!-- Add By ZM 20170918 input改为 checkbox End-->

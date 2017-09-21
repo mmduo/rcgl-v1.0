@@ -911,26 +911,14 @@ public class UserController {
 		List<ZSType> bzgzlList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "3");
 		Collections.sort(bzgzlList);
 		req.setAttribute("bzgzlList" , bzgzlList);
-		req.setAttribute("OtherBzgzlFlag" , "true");
 		/** 出行方式列表  **/
 		List<ZSType> cxtypeList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "4");
 		Collections.sort(cxtypeList);
 		req.setAttribute("cxtypeList" , cxtypeList);
-		req.setAttribute("OtherCxtypeFlag" , "true");
 		
 		if (StringUtil.isNotEmpty(zsZzc.getId())) {
 			zsZzc = systemService.getEntity(ZSZzc.class, zsZzc.getId());
 			req.setAttribute("zsZzc", zsZzc);
-			/** 不在岗种类如果选择其他，设置标志位，截取其他输入框的内容  **/
-			if (StringUtil.isNotEmpty(zsZzc.getBzgzl())&&zsZzc.getBzgzl().contains("其他")) {
-				req.setAttribute("OtherBzgzlFlag" , "false");
-				req.setAttribute("OtherBzgzlTxt" , zsZzc.getBzgzl().substring(zsZzc.getBzgzl().indexOf("其他,")+3));
-			}
-			/** 出行方式如果选择其他，设置标志位，截取其他输入框的内容  **/
-			if (StringUtil.isNotEmpty(zsZzc.getCxtype())&&zsZzc.getCxtype().contains("其他")) {
-				req.setAttribute("OtherCxtypeFlag" , "false");
-				req.setAttribute("OtherCxtypeTxt" , zsZzc.getCxtype().substring(zsZzc.getCxtype().indexOf("其他,")+3));
-			}
 		}
 		/***************  Upd By ZM 20170918 input改为 checkbox End  *************/
 		
@@ -973,6 +961,10 @@ public class UserController {
 		 * oConvertUtils.getString(req.getParameter("password"));
 		 */
 		if (StringUtil.isNotEmpty(zsZzc.getId())) {
+			/***** Upd By ZM 20170922 增加重复记录check start******/
+			Boolean isDuplicate = this.jeecgJdbcService.checkDuplicate(zsZzc.getName(),zsZzc.getKsdate(),zsZzc.getJsdate());
+			
+			/***** Upd By ZM 20170922 增加重复记录check end******/
 			ZSZzc zsZzcs = systemService.getEntity(ZSZzc.class, zsZzc.getId());
 			zsZzcs.setZzcdepart(zsZzc.getZzcdepart().trim());
 			zsZzcs.setZw(zsZzc.getZw().trim());
