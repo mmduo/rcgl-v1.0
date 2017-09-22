@@ -1,17 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@include file="/context/mytags.jsp"%>
-<script type="text/javascript" src="plug-in/common/zzcList.js"></script>
+<script type="text/javascript" src="plug-in/common/zzcmjList.js"></script>
 
-<table width="100%" id="zzcList" toolbar="#zzcListtb"></table>
-<div id="zzcListtb" style="padding:3px; ">
+<table width="100%" id="zzcmjList" toolbar="#zzcmjListtb"></table>
+<div id="zzcmjListtb" style="padding:3px; ">
 	<div name="searchColums">
 		<span style="display:-moz-inline-box;display:inline-block;">
 			<span style="display:-moz-inline-box;display:inline-block;width: 80px;text-align:right;">单位：</span>
 			<select name="zzcdepart" style="width: 135px">
-				<option value ="" >---请选择---</option>
 				<c:forEach items="${departList}" var="zzcdepart">
-					<option value="${zzcdepart.typename }">${zzcdepart.typename}</option>
+					<option value="${departList}">${departList}</option>
 				</c:forEach>
 			</select>
 		</span>
@@ -50,18 +49,14 @@
 	<div style="height:30px;" class="datagrid-toolbar">
 		<span style="float:left;">
 		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-add"
-			onclick="add('录入','userController.do?zzcaddorupdate','zzcList')">录入</a>
+			onclick="add('录入','userController.do?zzcmjaddorupdate','zzcmjList')">录入</a>
 		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-edit"
-			onclick="update('维护','userController.do?zzcaddorupdate','zzcList')">维护</a>
-		<!-- <a href="#" class="easyui-linkbutton" plain="true" icon="icon-edit"
-			onclick="zzcList.expFiles()">当日导出</a> -->
-		<!-- <a href="#" class="easyui-linkbutton" plain="true" icon="icon-add"
-			onclick="add('批量录入','userController.do?goImplXls','zzcList')">批量录入</a> -->
+			onclick="update('维护','userController.do?zzcmjaddorupdate','zzcmjList')">维护</a>
 		</span>
 		<span style="float:right">
-		<a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="zzcList.listSearch()">查询</a>
-		<!-- <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="zzcListsearch()">查询</a> -->
-		<a href="#" class="easyui-linkbutton" iconCls="icon-reload"	onclick="searchReset('zzcList')">重置</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="zzcmjList.listSearch()">查询</a>
+		<!-- <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="zzcmjListsearch()">查询</a> -->
+		<a href="#" class="easyui-linkbutton" iconCls="icon-reload"	onclick="searchReset('zzcmjList')">重置</a>
 		</span>
 	</div>
 </div>

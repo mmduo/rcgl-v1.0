@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl extends CommonServiceImpl implements UserService {
 
 	public TSUser checkUserExits(TSUser user){
-		return this.commonDao.getUserByUserIdAndUserNameExits(user);
+		return this.commonDao.zzcgetUserByUserIdAndUserNameExits(user);
+		/*return this.commonDao.getUserByUserIdAndUserNameExits(user);*/
 	}
 	public String getUserRole(TSUser user){
 		return this.commonDao.getUserRole(user);

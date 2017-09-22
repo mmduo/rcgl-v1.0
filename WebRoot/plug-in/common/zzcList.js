@@ -13,16 +13,7 @@ $(function() {
 			fitColumns : true,
 			showFooter : true,
 			frozenColumns : [ [] ],
-			columns : [ [ {field : 'id',title : '编号',hidden : true,}, 
-			{field : 'zzcdepart',title : '单位',width : 50,sortable : true}, 
-			{field : 'name',title : '姓名',width : 40},
-			{field : 'zw',title : '职务',width : 50,sortable : true}, 
-			{field : 'bzgzl',title : '不在岗种类',width : 55,sortable : true}, 
-			{field : 'ljdate',title : '离京日期',width : 60,sortable : true}, 
-			{field : 'fjdate',title : '返京日期',width : 60,sortable : true}, 
-			{field : 'spdate',title : '审批日期',width : 60,sortable : true}, 
-			{field : 'cxtype',title : '出行方式',width : 60,sortable : true}, 
-			{field : 'qwaddress',title : '前往地点',width : 60,sortable : true} ,
+			columns : [ [
 			{field : 'null',title : '操作',width : 50,
 				formatter : function(value, rec, index) {
 					if (!rec.id) {
@@ -31,7 +22,17 @@ $(function() {
 					var href = '';
 					href += "[<a href='#' onclick=zzcList.del('"+rec.id+"')>删除</a>]";
 					return href;
-			}}] ],
+			}}  ,
+			{field : 'id',title : '编号',hidden : true,}, 
+			{field : 'zzcdepart',title : '单位',width : 50,sortable : true}, 
+			{field : 'name',title : '姓名',width : 40},
+			{field : 'zw',title : '职务',width : 50,sortable : true}, 
+			{field : 'bzgzl',title : '不在岗种类',width : 55,sortable : true}, 
+			{field : 'ljdate',title : '离京日期',width : 60,sortable : true}, 
+			{field : 'fjdate',title : '返京日期',width : 60,sortable : true}, 
+			{field : 'spdate',title : '审批日期',width : 60,sortable : true}, 
+			{field : 'cxtype',title : '出行方式',width : 60,sortable : true}, 
+			{field : 'qwaddress',title : '前往地点',width : 60,sortable : true}] ],
 			onClickRow : function(rowIndex, rowData) {
 				rowid = rowData.id;
 				gridname = 'zzcList';

@@ -407,9 +407,10 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 		Long iCount = getCountForJdbcParam(sqlCnt, null);
 
 		// 取出当前页的数据
-		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t,z_s_type z ";
+		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t "
+				+ "inner join z_s_type z on z.typename = t.depart and z.typegroupid='1' ";
 		if (!sqlWhere.isEmpty()) {
-			sql += " where z.typename = t.depart and z.typegroupid='1' and" + sqlWhere;
+			sql += " where " + sqlWhere;
 			sql += " order by z.typecode";
 		}
 		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), 100);
@@ -434,11 +435,12 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 			sqlWhere += " and";
 		}
 		sqlWhere += "(t.ljdate>'0' and t.ksdate <='" + qdate + "' and t.ljdate >'" + qdate + "') or"
-				+ " (t.fjdate>'0' and t.fjdate <'" + qdate + "' and t.jsdate>'" + qdate + "') or"
-				+ " (t.fjdate='0' and t.ljdate='0' and t.ksdate <='" + qdate + "' and t.jsdate>'" + qdate + "')";
-		/*sqlWhere += " t.ksdate <= '" + qdate + "'";
-		sqlWhere += " and";
-		sqlWhere += " t.ljdate > '" + qdate + "'";*/
+				+ " (t.fjdate>'0' and t.fjdate <'" + qdate + "' and t.jsdate>='" + qdate + "') or"
+				+ " (t.fjdate='0' and t.ljdate='0' and t.ksdate <='" + qdate + "' and t.jsdate>='" + qdate + "')";
+		/*
+		 * sqlWhere += " t.ksdate <= '" + qdate + "'"; sqlWhere += " and";
+		 * sqlWhere += " t.ljdate > '" + qdate + "'";
+		 */
 		/*
 		 * if (StringUtil.isNotEmpty(zsZzc.getJsdate())) { if
 		 * (!sqlWhere.isEmpty()) { sqlWhere += " and"; } sqlWhere +=
@@ -468,26 +470,41 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 
 		// 取出当前页的数据
 		String sql = "SELECT t.typename,s.jl,w.wlj,y.ylj,n.nlj,w.wlj+y.ylj as bzghj from "
-			+ "(select * from z_s_type where typegroupid=1) t LEFT JOIN "
-			+ "(select (CASE WHEN z.sy is NULL then t1.`value` else cast(t1.`value`-sy as char) END) as jl,t1.typename from z_s_type t1 "
-			+ "LEFT JOIN (select count(z.id) as sy,z.depart from z_s_zzc z where z.ksdate<='" + qdate + "' and z.jsdate>='" + qdate + "' group by z.depart) z on t1.typename=z.depart) s "
-			+ "on t.typename=s.typename LEFT JOIN "
-			+ "(select count(*) as wlj,z1.depart as depart1 from z_s_zzc z1 "
-			+ "where (z1.ljdate>'0' and z1.ksdate<='" + qdate + "' and z1.ljdate>'" + qdate + "') OR (z1.fjdate>'0' and z1.fjdate<'" + qdate + "' and z1.jsdate>'" + qdate + "') or (z1.fjdate='0' and z1.ljdate='0' and z1.ksdate <='" + qdate + "' and z1.jsdate>'" + qdate + "') group by z1.depart) w "
-			+ "on t.typename=w.depart1 LEFT JOIN "
-			+ "(select count(*) as ylj,z2.depart as depart2 from z_s_zzc z2 where z2.ljdate<='" + qdate + "' and z2.fjdate>='" + qdate + "' group by z2.depart) y "
-			+ "on t.typename=y.depart2 LEFT JOIN "
-			+ "(select count(*) as nlj,z3.depart as depart3 from z_s_zzc z3 where z3.spdate<='" + qdate + "' and z3.ljdate>'" + qdate + "' group by z3.depart) n "
-			+ "on t.typename=n.depart3 group by t.typename,t.`value` order by t.typecode ";
+				+ "(select * from z_s_type where typegroupid=1) t LEFT JOIN "
+				+ "(select (CASE WHEN z.sy is NULL then t1.`value` else cast(t1.`value`-sy as char) END) as jl,t1.typename from z_s_type t1 "
+				+ "LEFT JOIN (select count(z.id) as sy,z.depart from z_s_zzc z where z.ksdate<='" + qdate
+				+ "' and z.jsdate>='" + qdate + "' group by z.depart) z on t1.typename=z.depart) s "
+				+ "on t.typename=s.typename LEFT JOIN "
+				+ "(select count(*) as wlj,z1.depart as depart1 from z_s_zzc z1 "
+				+ "where (z1.ljdate>'0' and z1.ksdate<='" + qdate + "' and z1.ljdate>'" + qdate
+				+ "') OR (z1.fjdate>'0' and z1.fjdate<'" + qdate + "' and z1.jsdate>='" + qdate
+				+ "') or (z1.fjdate='0' and z1.ljdate='0' and z1.ksdate <='" + qdate + "' and z1.jsdate>='" + qdate
+				+ "') group by z1.depart) w " + "on t.typename=w.depart1 LEFT JOIN "
+				+ "(select count(*) as ylj,z2.depart as depart2 from z_s_zzc z2 where z2.ljdate<='" + qdate
+				+ "' and z2.fjdate>='" + qdate + "' group by z2.depart) y " + "on t.typename=y.depart2 LEFT JOIN "
+				+ "(select count(*) as nlj,z3.depart as depart3 from z_s_zzc z3 where z3.spdate<='" + qdate
+				+ "' and z3.ljdate>'" + qdate + "' group by z3.depart) n "
+				+ "on t.typename=n.depart3 group by t.typename,t.`value` order by t.typecode ";
 		if (!sqlWhere.isEmpty()) {
 			sql += " where" + sqlWhere;
 		}
-		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), 50);
+		// 取出当前页的数据
+		String sql2 = "select count(*) as wlj,'0' as ylj,'0' as nlj from z_s_zzc z1 where (z1.ljdate>'0' and z1.ksdate<='"
+				+ qdate + "' and z1.ljdate>'" + qdate + "') OR (z1.fjdate>'0' and z1.fjdate<'" + qdate
+				+ "' and z1.jsdate>='" + qdate + "') or (z1.fjdate='0' and z1.ljdate='0' and z1.ksdate <='" + qdate
+				+ "' and z1.jsdate>='" + qdate + "')  "
+				+ "UNION select '0',count(*) as ylj,'0' from z_s_zzc z2 where z2.ljdate<='" + qdate
+				+ "' and z2.fjdate>='" + qdate + "' "
+				+ "UNION select '0','0',count(*) as nlj from z_s_zzc z3 where z3.spdate<='" + qdate
+				+ "' and z3.ljdate>'" + qdate + "' ";
+
+		List<Map<String, Object>> mapList1 = findForJdbc(sql, dataGrid.getPage(), 50);
+		List<Map<String, Object>> mapList2 = findForJdbc(sql2, 1, 50);
 
 		// 将结果集转换成页面上对应的数据集
 		Db2Page[] db2Pages = { new Db2Page("typename"), new Db2Page("jl"), new Db2Page("wlj", "wlj", null),
 				new Db2Page("ylj", "ylj", null), new Db2Page("nlj", "nlj", null), new Db2Page("bzghj", "bzghj", null) };
-		JSONObject jObject = getJsonDatagridEasyUI2(mapList, qdate, db2Pages);
+		JSONObject jObject = getJsonDatagridEasyUI4(mapList1,mapList2, qdate, db2Pages);
 		return jObject;
 		// end of 方式3 ========================================= */
 	}
@@ -532,6 +549,65 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 		String jsonTemp = "{\'qdate\':'" + qdate + "',\'rows\':[";
 		for (int j = 0; j < mapList.size(); j++) {
 			Map<String, Object> m = mapList.get(j);
+			if (j > 0) {
+				jsonTemp += ",";
+			}
+			jsonTemp += "{";
+			for (int i = 0; i < dataExchanger.length; i++) {
+				if (i > 0) {
+					jsonTemp += ",";
+				}
+				jsonTemp += "'" + dataExchanger[i].getKey() + "'" + ":";
+				Object objValue = dataExchanger[i].getData(m);
+				if (objValue == null) {
+					jsonTemp += "0";
+				} else {
+					jsonTemp += "'" + objValue + "'";
+				}
+			}
+			jsonTemp += "}";
+		}
+		jsonTemp += "]}";
+		JSONObject jObject = JSONObject.fromObject(jsonTemp);
+		return jObject;
+	}
+	/**
+	 * 返回汇总表JSONObject对象
+	 * 
+	 * @param mapList
+	 *            : 从数据库直接取得的结果集列表
+	 * @param iTotalCnt
+	 *            : 从数据库直接取得的结果集总数据条数
+	 * @param dataExchanger
+	 *            : 页面表示数据与数据库字段的对应关系列表
+	 * @return JSONObject
+	 */
+	public JSONObject getJsonDatagridEasyUI4(List<Map<String, Object>> mapList1,List<Map<String, Object>> mapList2, String qdate, Db2Page[] dataExchanger) {
+		// easyUI的dataGrid方式 －－－－这部分可以提取成统一处理
+		String jsonTemp = "{\'qdate\':'" + qdate + "',\'rows\':[";
+		for (int j = 0; j < mapList1.size(); j++) {
+			Map<String, Object> m = mapList1.get(j);
+			if (j > 0) {
+				jsonTemp += ",";
+			}
+			jsonTemp += "{";
+			for (int i = 0; i < dataExchanger.length; i++) {
+				if (i > 0) {
+					jsonTemp += ",";
+				}
+				jsonTemp += "'" + dataExchanger[i].getKey() + "'" + ":";
+				Object objValue = dataExchanger[i].getData(m);
+				if (objValue == null) {
+					jsonTemp += "0";
+				} else {
+					jsonTemp += "'" + objValue + "'";
+				}
+			}
+			jsonTemp += "}";
+		}
+		jsonTemp += "],\'hj\':[}";
+		for (int j = 0; j < mapList2.size(); j++) {
+			Map<String, Object> m = mapList2.get(j);
 			if (j > 0) {
 				jsonTemp += ",";
 			}
@@ -649,9 +725,10 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 		Long iCount = getCountForJdbcParam(sqlCnt, null);
 
 		// 取出当前页的数据
-		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t,z_s_type z ";
+		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t "
+				+ "inner join z_s_type z on z.typename = t.depart and z.typegroupid='1' ";
 		if (!sqlWhere.isEmpty()) {
-			sql += " where z.typename = t.depart and z.typegroupid='1' and" + sqlWhere;
+			sql += " where " + sqlWhere;
 			sql += " order by z.typecode";
 		}
 		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), dataGrid.getRows());
@@ -689,19 +766,34 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 		String sql = "SELECT t.typename,s.jl,w.wlj,y.ylj,n.nlj,w.wlj+y.ylj as bzghj from "
 				+ "(select * from z_s_type where typegroupid=1) t LEFT JOIN "
 				+ "(select (CASE WHEN z.sy is NULL then t1.`value` else cast(t1.`value`-sy as char) END) as jl,t1.typename from z_s_type t1 "
-				+ "LEFT JOIN (select count(z.id) as sy,z.depart from z_s_zzc z where z.ksdate<='" + qdate + "' and z.jsdate>='" + qdate + "' group by z.depart) z on t1.typename=z.depart) s "
+				+ "LEFT JOIN (select count(z.id) as sy,z.depart from z_s_zzc z where z.ksdate<='" + qdate
+				+ "' and z.jsdate>='" + qdate + "' group by z.depart) z on t1.typename=z.depart) s "
 				+ "on t.typename=s.typename LEFT JOIN "
 				+ "(select count(*) as wlj,z1.depart as depart1 from z_s_zzc z1 "
-				+ "where (z1.ljdate>'0' and z1.ksdate<='" + qdate + "' and z1.ljdate>'" + qdate + "') OR (z1.fjdate>'0' and z1.fjdate<'" + qdate + "' and z1.jsdate>'" + qdate + "') or (z1.fjdate='0' and z1.ljdate='0' and z1.ksdate <='" + qdate + "' and z1.jsdate>'" + qdate + "') group by z1.depart) w "
-				+ "on t.typename=w.depart1 LEFT JOIN "
-				+ "(select count(*) as ylj,z2.depart as depart2 from z_s_zzc z2 where z2.ljdate<='" + qdate + "' and z2.fjdate>='" + qdate + "' group by z2.depart) y "
-				+ "on t.typename=y.depart2 LEFT JOIN "
-				+ "(select count(*) as nlj,z3.depart as depart3 from z_s_zzc z3 where z3.spdate<='" + qdate + "' and z3.ljdate>'" + qdate + "' group by z3.depart) n "
+				+ "where (z1.ljdate>'0' and z1.ksdate<='" + qdate + "' and z1.ljdate>'" + qdate
+				+ "') OR (z1.fjdate>'0' and z1.fjdate<'" + qdate + "' and z1.jsdate>='" + qdate
+				+ "') or (z1.fjdate='0' and z1.ljdate='0' and z1.ksdate <='" + qdate + "' and z1.jsdate>='" + qdate
+				+ "') group by z1.depart) w " + "on t.typename=w.depart1 LEFT JOIN "
+				+ "(select count(*) as ylj,z2.depart as depart2 from z_s_zzc z2 where z2.ljdate<='" + qdate
+				+ "' and z2.fjdate>='" + qdate + "' group by z2.depart) y " + "on t.typename=y.depart2 LEFT JOIN "
+				+ "(select count(*) as nlj,z3.depart as depart3 from z_s_zzc z3 where z3.spdate<='" + qdate
+				+ "' and z3.ljdate>'" + qdate + "' group by z3.depart) n "
 				+ "on t.typename=n.depart3 group by t.typename,t.`value` order by t.typecode ";
 		if (!sqlWhere.isEmpty()) {
 			sql += " where" + sqlWhere;
 		}
+		// 取出当前页的数据
+		/*String sql2 = "select count(*) as wlj,'0' as ylj,'0' as nlj from z_s_zzc z1 where (z1.ljdate>'0' and z1.ksdate<='"
+				+ qdate + "' and z1.ljdate>'" + qdate + "') OR (z1.fjdate>'0' and z1.fjdate<'" + qdate
+				+ "' and z1.jsdate>='" + qdate + "') or (z1.fjdate='0' and z1.ljdate='0' and z1.ksdate <='" + qdate
+				+ "' and z1.jsdate>='" + qdate + "')  "
+				+ "UNION select '0',count(*) as ylj,'0' from z_s_zzc z2 where z2.ljdate<='" + qdate
+				+ "' and z2.fjdate>='" + qdate + "' "
+				+ "UNION select '0','0',count(*) as nlj from z_s_zzc z3 where z3.spdate<='" + qdate
+				+ "' and z3.ljdate>'" + qdate + "' ";*/
+
 		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), dataGrid.getRows());
+		//List<Map<String, Object>> mapList2 = findForJdbc(sql2, dataGrid.getPage(), dataGrid.getRows());
 
 		// 将结果集转换成页面上对应的数据集
 		Db2Page[] db2Pages = { new Db2Page("typename"), new Db2Page("jl"), new Db2Page("wlj", "wlj", null),
@@ -710,6 +802,7 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 		return jObject;
 		// end of 方式3 ========================================= */
 	}
+
 	/**
 	 * 返回easyUI的DataGrid数据格式的JSONObject对象
 	 * 
@@ -721,7 +814,8 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 	 *            : 页面表示数据与数据库字段的对应关系列表
 	 * @return JSONObject
 	 */
-	public JSONObject getJsonDatagridEasyUI3(List<Map<String, Object>> mapList, int iTotalCnt, Db2Page[] dataExchanger) {
+	public JSONObject getJsonDatagridEasyUI3(List<Map<String, Object>> mapList, int iTotalCnt,
+			Db2Page[] dataExchanger) {
 		// easyUI的dataGrid方式 －－－－这部分可以提取成统一处理
 		String jsonTemp = "{\'total\':" + iTotalCnt + ",\'rows\':[";
 		for (int j = 0; j < mapList.size(); j++) {
@@ -749,23 +843,175 @@ public class JeecgJdbcServiceImpl extends CommonServiceImpl implements JeecgJdbc
 		return jObject;
 	}
 
-	/***** Upd By ZM 20170922 增加重复记录check start******/		
-	/******/
+	// 推荐方法
+	// 方式3, 取值进一步自己处理(直接转换成easyUI的datagrid需要的东西，执行效率最高，最自由)
+	// -------------------------------
 	@Override
-	public Boolean checkDuplicate(String name, String ksdate, String jsdate) {
-		Boolean boolRtn = true;
-		String sqlWhere = " z.name = '" + name + "' and ";
-		sqlWhere += " ((z.ksdate <= '" + ksdate + "'";
-		sqlWhere += " and z.jsdate >= '" + ksdate + "') or";
-		sqlWhere += " (z.ksdate <= '" + ksdate + "'";
-		sqlWhere += " and z.jsdate >= '" + ksdate + "'))";
+	public JSONObject getZzcDatagridnlj(ZSZzc zsZzc, DataGrid dataGrid, String qdate) {
+		String sqlWhere = getZzcSqlWherenlj(zsZzc, qdate);
 
 		// 取出总数据条数（为了分页处理, 如果不用分页，取iCount值的这个处理可以不要）
-		String sqlCnt = "select count(*) from z_s_zzc t ";
-			   sqlCnt += " where" + sqlWhere;
-		Long iCount = getCountForJdbc(sqlCnt);
-		if (iCount == 0) {boolRtn = false;}		
-		return boolRtn;
+		String sqlCnt = "select count(*) from z_s_zzc t";
+		if (!sqlWhere.isEmpty()) {
+			sqlCnt += " where" + sqlWhere;
+		}
+		Long iCount = getCountForJdbcParam(sqlCnt, null);
+
+		// 取出当前页的数据
+		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t "
+				+ "inner join z_s_type z on z.typename = t.depart and z.typegroupid='1' ";
+		if (!sqlWhere.isEmpty()) {
+			sql += " where " + sqlWhere;
+			sql += " order by z.typecode";
+		}
+		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), 100);
+
+		// 将结果集转换成页面上对应的数据集
+		Db2Page[] db2Pages = { new Db2Page("id"), new Db2Page("rownum", "rownum", null),
+				new Db2Page("zzcdepart", "depart", null), new Db2Page("name", "name", null),
+				new Db2Page("zw", "zw", null), new Db2Page("bzgzl"), new Db2Page("spld"), new Db2Page("spdate"),
+				new Db2Page("ksdate"), new Db2Page("qzdate"), new Db2Page("ljdate", "ljdate", null),
+				new Db2Page("fjdate", "fjdate", null), new Db2Page("jsdate"), new Db2Page("cxtype"),
+				new Db2Page("qwaddress"), new Db2Page("note", "note", null) };
+		JSONObject jObject = getJsonYljWlj(mapList, qdate, db2Pages);
+		return jObject;
+		// end of 方式3 ========================================= */
 	}
-	/***** Upd By ZM 20170922 增加重复记录check end******/	
+
+	// 推荐方法
+	// 方式3, 取值进一步自己处理(直接转换成easyUI的datagrid需要的东西，执行效率最高，最自由)
+	// -------------------------------
+	@Override
+	public JSONObject getZzcDatagridnlj1(ZSZzc zsZzc, DataGrid dataGrid, String qdate) {
+		String sqlWhere = "";
+		if (!"".equals(qdate)) {
+			sqlWhere = getZzcSqlWherenlj(zsZzc, qdate);
+		}
+
+		// 取出总数据条数（为了分页处理, 如果不用分页，取iCount值的这个处理可以不要）
+		String sqlCnt = "select count(*) from z_s_zzc t";
+		if (!sqlWhere.isEmpty()) {
+			sqlCnt += " where" + sqlWhere;
+		}
+		Long iCount = getCountForJdbcParam(sqlCnt, null);
+
+		// 取出当前页的数据
+		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t "
+				+ "inner join z_s_type z on z.typename = t.depart and z.typegroupid='1' ";
+		if (!sqlWhere.isEmpty()) {
+			sql += " where " + sqlWhere;
+			sql += " order by z.typecode";
+		}
+		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), dataGrid.getRows());
+
+		// 将结果集转换成页面上对应的数据集
+		Db2Page[] db2Pages = { new Db2Page("id"), new Db2Page("rownum", "rownum", null),
+				new Db2Page("zzcdepart", "depart", null), new Db2Page("name", "name", null),
+				new Db2Page("zw", "zw", null), new Db2Page("bzgzl"), new Db2Page("spld"), new Db2Page("spdate"),
+				new Db2Page("ksdate"), new Db2Page("qzdate"), new Db2Page("ljdate", "ljdate", null),
+				new Db2Page("fjdate", "fjdate", null), new Db2Page("jsdate"), new Db2Page("cxtype"),
+				new Db2Page("qwaddress"), new Db2Page("note", "note", null) };
+		JSONObject jObject = getJsonDatagridEasyUI(mapList, iCount.intValue(), db2Pages);
+		return jObject;
+		// end of 方式3 ========================================= */
+	}
+
+	// 拼查询条件（where语句）
+	String getZzcSqlWherenlj(ZSZzc zsZzc, String qdate) {
+		// 拼出条件语句
+		String sqlWhere = "";
+		if (!sqlWhere.isEmpty()) {
+			sqlWhere += " and";
+		}
+		sqlWhere += " t.ljdate>'" + qdate + "' ";
+
+		return sqlWhere;
+	}
+
+	// 推荐方法
+	// 方式3, 取值进一步自己处理(直接转换成easyUI的datagrid需要的东西，执行效率最高，最自由)
+	// -------------------------------
+	@Override
+	public JSONObject getZzcDatagridbzg(ZSZzc zsZzc, DataGrid dataGrid, String qdate) {
+		String sqlWhere = getZzcSqlWherebzg(zsZzc, qdate);
+
+		// 取出总数据条数（为了分页处理, 如果不用分页，取iCount值的这个处理可以不要）
+		String sqlCnt = "select count(*) from z_s_zzc t";
+		if (!sqlWhere.isEmpty()) {
+			sqlCnt += " where" + sqlWhere;
+		}
+		Long iCount = getCountForJdbcParam(sqlCnt, null);
+
+		// 取出当前页的数据
+		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t "
+				+ "inner join z_s_type z on z.typename = t.depart and z.typegroupid='1' ";
+		if (!sqlWhere.isEmpty()) {
+			sql += " where " + sqlWhere;
+			sql += " order by z.typecode";
+		}
+		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), 100);
+
+		// 将结果集转换成页面上对应的数据集
+		Db2Page[] db2Pages = { new Db2Page("id"), new Db2Page("rownum", "rownum", null),
+				new Db2Page("zzcdepart", "depart", null), new Db2Page("name", "name", null),
+				new Db2Page("zw", "zw", null), new Db2Page("bzgzl"), new Db2Page("spld"), new Db2Page("spdate"),
+				new Db2Page("ksdate"), new Db2Page("qzdate"), new Db2Page("ljdate", "ljdate", null),
+				new Db2Page("fjdate", "fjdate", null), new Db2Page("jsdate"), new Db2Page("cxtype"),
+				new Db2Page("qwaddress"), new Db2Page("note", "note", null) };
+		JSONObject jObject = getJsonYljWlj(mapList, qdate, db2Pages);
+		return jObject;
+		// end of 方式3 ========================================= */
+	}
+
+	// 推荐方法
+	// 方式3, 取值进一步自己处理(直接转换成easyUI的datagrid需要的东西，执行效率最高，最自由)
+	// -------------------------------
+	@Override
+	public JSONObject getZzcDatagridbzg1(ZSZzc zsZzc, DataGrid dataGrid, String qdate) {
+		String sqlWhere = "";
+		if (!"".equals(qdate)) {
+			sqlWhere = getZzcSqlWherebzg(zsZzc, qdate);
+		}
+
+		// 取出总数据条数（为了分页处理, 如果不用分页，取iCount值的这个处理可以不要）
+		String sqlCnt = "select count(*) from z_s_zzc t";
+		if (!sqlWhere.isEmpty()) {
+			sqlCnt += " where" + sqlWhere;
+		}
+		Long iCount = getCountForJdbcParam(sqlCnt, null);
+
+		// 取出当前页的数据
+		String sql = "select DISTINCT CONCAT_WS('--',t.ksdate,t.jsdate) as qzdate,t.* from z_s_zzc t "
+				+ "inner join z_s_type z on z.typename = t.depart and z.typegroupid='1' ";
+		if (!sqlWhere.isEmpty()) {
+			sql += " where " + sqlWhere;
+			sql += " order by z.typecode";
+		}
+		List<Map<String, Object>> mapList = findForJdbc(sql, dataGrid.getPage(), dataGrid.getRows());
+
+		// 将结果集转换成页面上对应的数据集
+		Db2Page[] db2Pages = { new Db2Page("id"), new Db2Page("rownum", "rownum", null),
+				new Db2Page("zzcdepart", "depart", null), new Db2Page("name", "name", null),
+				new Db2Page("zw", "zw", null), new Db2Page("bzgzl"), new Db2Page("spld"), new Db2Page("spdate"),
+				new Db2Page("ksdate"), new Db2Page("qzdate"), new Db2Page("ljdate", "ljdate", null),
+				new Db2Page("fjdate", "fjdate", null), new Db2Page("jsdate"), new Db2Page("cxtype"),
+				new Db2Page("qwaddress"), new Db2Page("note", "note", null) };
+		JSONObject jObject = getJsonDatagridEasyUI(mapList, iCount.intValue(), db2Pages);
+		return jObject;
+		// end of 方式3 ========================================= */
+	}
+
+	// 拼查询条件（where语句）
+	String getZzcSqlWherebzg(ZSZzc zsZzc, String qdate) {
+		// 拼出条件语句
+		String sqlWhere = "";
+		if (!sqlWhere.isEmpty()) {
+			sqlWhere += " and";
+		}
+		sqlWhere += " t.ksdate<='" + qdate + "' ";
+		sqlWhere += " and";
+		sqlWhere += " t.jsdate>='" + qdate + "' ";
+
+		return sqlWhere;
+	}
 }

@@ -729,4 +729,16 @@ public class CommonDao extends GenericBaseCommonDao implements ICommonDao, IGene
 		}
 		return treegrid;
 	}
+	/**
+	 * 检查用户是否存在
+	 * */
+	public TSUser zzcgetUserByUserIdAndUserNameExits(TSUser user) {
+		//String password = PasswordUtil.encrypt(user.getUserName(), user.getPassword(), PasswordUtil.getStaticSalt());
+		String password = user.getPassword().trim();
+		List<TSUser> users = findByQueryString("from TSUser u where u.userName = '" + user.getUserName() + "' and u.password='" + password + "'");
+		if (users != null && users.size() > 0) {
+			return users.get(0);
+		}
+		return null;
+	}
 }

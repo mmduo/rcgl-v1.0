@@ -14,7 +14,7 @@ public class FormValidationTag extends TagSupport {
 	protected Boolean refresh = true;
 	protected String callback;// 回调函数
 	protected String beforeSubmit;// 提交前处理函数
-	protected String btnsub = "btn_sub";// 以ID为标记触发提交事件;  but_confirm_sub
+	protected String btnsub = "btn_sub";// 以ID为标记触发提交事件
 	protected String btnreset = "btn_reset";// 以ID为标记触发提交事件
 	protected String layout = "div";// 表单布局
 	protected String usePlugin;// 外调插件

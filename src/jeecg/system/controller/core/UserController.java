@@ -757,6 +757,24 @@ public class UserController {
 		
 		return "system/user/zzcList";
 	}
+	/**
+	 * 民警不在岗管理页面跳转
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "mjZzc")
+	public String mjZzc(HttpServletRequest request) {
+		TSUser u = ResourceUtil.getSessionUserName();
+		if(u.getBrowser() != null && !"".equals(u.getBrowser())){
+			request.setAttribute("departList" , u.getBrowser().trim());
+		}
+		
+		List<ZSType> zwList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "2");
+		Collections.sort(zwList);
+		request.setAttribute("zwList" , zwList);
+		
+		return "system/user/zzcmjList";
+	}
 
 	/**
 	 * 已离京列表页面跳转
@@ -777,7 +795,24 @@ public class UserController {
 	public String wljZzc(HttpServletRequest request) {
 		return "system/user/zzcwljList";
 	}
-
+	/**
+	 * 拟离京列表页面跳转
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "nljZzc")
+	public String nljZzc(HttpServletRequest request) {
+		return "system/user/zzcnljList";
+	}
+	/**
+	 * 不在岗列表页面跳转
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "bzgZzc")
+	public String bzgZzc(HttpServletRequest request) {
+		return "system/user/zzcbzgList";
+	}
 	/**
 	 * 汇总列表页面跳转
 	 * 
@@ -800,6 +835,55 @@ public class UserController {
 			throws ParseException {
 		CriteriaQuery cq = new CriteriaQuery(ZSZzc.class, dataGrid);
 
+		if (zsZzc.getFjdate() != null) {
+			String fjdate = oConvertUtils.getString(zsZzc.getFjdate().replace("-", "").trim());
+			cq.eq("fjdate", fjdate);
+			zsZzc.setFjdate(fjdate);
+		}
+		if (zsZzc.getJsdate() != null) {
+			String jsdate = oConvertUtils.getString(zsZzc.getJsdate().replace("-", "").trim());
+			cq.eq("jsdate", jsdate);
+			zsZzc.setJsdate(jsdate);
+		}
+		if (zsZzc.getKsdate() != null) {
+			String ksdate = oConvertUtils.getString(zsZzc.getKsdate().replace("-", "").trim());
+			cq.eq("ksdate", ksdate);
+			zsZzc.setKsdate(ksdate);
+		}
+		if (zsZzc.getLjdate() != null) {
+			String ljdate = oConvertUtils.getString(zsZzc.getLjdate().replace("-", "").trim());
+			cq.eq("ljdate", ljdate);
+			zsZzc.setLjdate(ljdate);
+		}
+		if (zsZzc.getSpdate() != null) {
+			String spdate = oConvertUtils.getString(zsZzc.getSpdate().replace("-", "").trim());
+			cq.eq("spdate", spdate);
+			zsZzc.setSpdate(spdate);
+		}
+		cq.addOrder("zzcdepart", SortDirection.asc);
+		cq.add();
+		// 查询条件组装器
+		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, zsZzc);
+		this.systemService.getDataGridReturn(cq, true);
+		TagUtil.datagrid(response, dataGrid);
+	}
+	
+	/**
+	 * easyuiAJAX用户列表请求数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 */
+	@RequestMapping(params = "zzcmjdatagrid")
+	public void zzcmjdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
+			throws ParseException {
+		TSUser u = ResourceUtil.getSessionUserName();
+		CriteriaQuery cq = new CriteriaQuery(ZSZzc.class, dataGrid);
+
+		if(u.getBrowser() != null && !"".equals(u.getBrowser())){
+			request.setAttribute("departList" , u.getBrowser().trim());
+		}
 		if (zsZzc.getFjdate() != null) {
 			String fjdate = oConvertUtils.getString(zsZzc.getFjdate().replace("-", "").trim());
 			cq.eq("fjdate", fjdate);
@@ -868,7 +952,42 @@ public class UserController {
 			responseDatagrid(response, jObject2);
 		}
 	}
-
+	
+	/**
+	 * 拟离京easyuiAJAX用户列表请求数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 */
+	@RequestMapping(params = "zzcnljdatagrid")
+	public void zzcnljdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
+			throws ParseException {
+		String qdate = "";
+		if (request.getParameter("qdate") != null && !"".equals(request.getParameter("qdate"))) {
+			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+			JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridnlj1(zsZzc, dataGrid, qdate);
+			responseDatagrid(response, jObject2);
+		}
+	}
+	/**
+	 * 不在岗easyuiAJAX用户列表请求数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 */
+	@RequestMapping(params = "zzcbzgdatagrid")
+	public void zzcbzgdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
+			throws ParseException {
+		String qdate = "";
+		if (request.getParameter("qdate") != null && !"".equals(request.getParameter("qdate"))) {
+			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+			JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridbzg1(zsZzc, dataGrid, qdate);
+			responseDatagrid(response, jObject2);
+		}
+	}
+	
 	/**
 	 * 汇总easyuiAJAX用户列表请求数据
 	 * 
@@ -924,6 +1043,34 @@ public class UserController {
 		
 		return new ModelAndView("system/user/zsZzc");
 	}
+	/**
+	 * easyuiAJAX请求数据： 民警录入或修改跳转
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 * @param user
+	 */
+	@RequestMapping(params = "zzcmjaddorupdate")
+	public ModelAndView zzcmjaddorupdate(ZSZzc zsZzc, HttpServletRequest req) {
+		TSUser u = ResourceUtil.getSessionUserName();
+
+		req.setAttribute("departList", u.getBrowser().trim());
+		
+		List<ZSType> zwList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "2");
+		Collections.sort(zwList);
+		req.setAttribute("zwList", zwList);
+		
+		List<ZSType> bzgList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "3");
+		Collections.sort(bzgList);
+		req.setAttribute("bzgList", bzgList);
+
+		if (StringUtil.isNotEmpty(zsZzc.getId())) {
+			zsZzc = systemService.getEntity(ZSZzc.class, zsZzc.getId());
+			req.setAttribute("zsZzc", zsZzc);
+		}
+		return new ModelAndView("system/user/zsZzcmj");
+	}
 
 	/**
 	 * easyuiAJAX请求数据： 实有警力维护
@@ -961,10 +1108,6 @@ public class UserController {
 		 * oConvertUtils.getString(req.getParameter("password"));
 		 */
 		if (StringUtil.isNotEmpty(zsZzc.getId())) {
-			/***** Upd By ZM 20170922 增加重复记录check start******/
-			Boolean isDuplicate = this.jeecgJdbcService.checkDuplicate(zsZzc.getName(),zsZzc.getKsdate(),zsZzc.getJsdate());
-			
-			/***** Upd By ZM 20170922 增加重复记录check end******/
 			ZSZzc zsZzcs = systemService.getEntity(ZSZzc.class, zsZzc.getId());
 			zsZzcs.setZzcdepart(zsZzc.getZzcdepart().trim());
 			zsZzcs.setZw(zsZzc.getZw().trim());
@@ -988,9 +1131,15 @@ public class UserController {
 				zsZzcs.setJsdate("99999999");
 			}
 
-			zsZzcs.setCxtype(zsZzc.getCxtype().trim());
-			zsZzcs.setQwaddress(zsZzc.getQwaddress().trim());
-			zsZzcs.setNote(zsZzc.getNote().trim());
+			if (zsZzc.getCxtype() != null && !"".equals(zsZzc.getCxtype())) {
+				zsZzcs.setCxtype(zsZzc.getCxtype().trim());
+			}
+			if (zsZzc.getQwaddress() != null && !"".equals(zsZzc.getQwaddress())) {
+				zsZzcs.setQwaddress(zsZzc.getQwaddress().trim());
+			}
+			if (zsZzc.getNote() != null && !"".equals(zsZzc.getNote())) {
+				zsZzcs.setNote(zsZzc.getNote().trim());
+			}
 
 			systemService.updateEntitie(zsZzcs);
 
@@ -1018,7 +1167,7 @@ public class UserController {
 			} else {
 				zsZzc.setJsdate("99999999");
 			}
-						
+			
 			systemService.save(zsZzc);
 			message = "民警: " + zsZzc.getName() + "不在岗情况添加成功";
 			systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);

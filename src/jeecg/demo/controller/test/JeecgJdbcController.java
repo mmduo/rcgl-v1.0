@@ -245,10 +245,14 @@ public class JeecgJdbcController extends BaseController {
 		JSONObject jObject1 = this.jeecgJdbcService.getZzcDatagridylj(zsZzc, dataGrid,qdate);
 		JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridwlj(zsZzc, dataGrid,qdate);
 		JSONObject jObject3 = this.jeecgJdbcService.getZzcDatagridhz(zsZzc, dataGrid,qdate);
+		JSONObject jObject4 = this.jeecgJdbcService.getZzcDatagridnlj(zsZzc, dataGrid,qdate);
+		JSONObject jObject5 = this.jeecgJdbcService.getZzcDatagridbzg(zsZzc, dataGrid,qdate);
 		try {
 			documentHandler.createDoc1(jObject1,qdate);
 			documentHandler.createDoc2(jObject2,qdate);
 			documentHandler.createDoc3(jObject3,qdate);
+			documentHandler.createDoc4(jObject4,qdate);
+			documentHandler.createDoc5(jObject5,qdate);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -305,6 +309,62 @@ public class JeecgJdbcController extends BaseController {
 		JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridwlj(zsZzc, dataGrid,qdate);
 		try {
 			documentHandler.createDoc2(jObject2,qdate);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		message = "文件导出成功";
+		j.setMsg(message);
+		return j;
+	}
+	/**
+	 * 拟离京导出文件
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "zzcnljexpFiles")
+	@ResponseBody
+	public AjaxJson zzcnljexpFiles(ZSZzc zsZzc,HttpServletRequest request,DataGrid dataGrid) {
+		AjaxJson j = new AjaxJson();
+		Date now = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");// 可以方便地修改日期格式
+		String qdate = dateFormat.format(now);
+		if(request.getParameter("qdate")!=null&&!"".equals(request.getParameter("qdate"))){
+			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+		}
+		
+		JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridnlj(zsZzc, dataGrid,qdate);
+		try {
+			documentHandler.createDoc4(jObject2,qdate);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		message = "文件导出成功";
+		j.setMsg(message);
+		return j;
+	}
+	/**
+	 * 不在岗导出文件
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "zzcbzgexpFiles")
+	@ResponseBody
+	public AjaxJson zzcbzgexpFiles(ZSZzc zsZzc,HttpServletRequest request,DataGrid dataGrid) {
+		AjaxJson j = new AjaxJson();
+		Date now = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");// 可以方便地修改日期格式
+		String qdate = dateFormat.format(now);
+		if(request.getParameter("qdate")!=null&&!"".equals(request.getParameter("qdate"))){
+			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+		}
+		
+		JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridbzg(zsZzc, dataGrid,qdate);
+		try {
+			documentHandler.createDoc5(jObject2,qdate);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

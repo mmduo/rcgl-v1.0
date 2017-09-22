@@ -15,9 +15,12 @@ public interface JeecgJdbcServiceI extends CommonService{
 	public JSONObject getZzcDatagridylj(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 	public JSONObject getZzcDatagridwlj(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 	public JSONObject getZzcDatagridhz(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
+	public JSONObject getZzcDatagridnlj(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
+	public JSONObject getZzcDatagridbzg(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 	
 	public JSONObject getZzcDatagridylj1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 	public JSONObject getZzcDatagridwlj1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 	public JSONObject getZzcDatagridhz1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
-	public Boolean checkDuplicate(String name,String ksdate, String jsdate);
+	public JSONObject getZzcDatagridnlj1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
+	public JSONObject getZzcDatagridbzg1(ZSZzc zsZzc, DataGrid dataGrid,String qdate);
 }
