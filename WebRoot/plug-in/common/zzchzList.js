@@ -65,12 +65,12 @@ var zzchzList = {
 		},
 		expFiles:function(){
 			var queryParams = $('#zzchzList').datagrid('options').queryParams;
-			var qdate = $("[name=qdate]").val();
+			var zzchzqdate = $("[name=zzchzqdate]").val();
 			$.ajax({
 				async : false,
 				cache : false,
 				type : 'POST',
-				url : 'jeecgJdbcController.do?zzchzexpFiles&qdate='+qdate,// 请求的action路径
+				url : 'jeecgJdbcController.do?zzchzexpFiles&zzchzqdate='+zzchzqdate,// 请求的action路径
 				error : function() {// 请求失败处理函数
 				},
 				success : function(data) {
@@ -86,6 +86,11 @@ var zzchzList = {
 					}
 				}
 			})
+		},
+		expExcelFiles:function(){
+			var queryParams = $('#zzchzList').datagrid('options').queryParams;
+			var zzchzqdate = $("[name=zzchzqdate]").val();
+			window.location.href="jeecgJdbcController.do?zzchzexpExcelFiles&zzchzqdate="+zzchzqdate;// 请求的action路径;
 		}
 	};
 function searchReset(name) {

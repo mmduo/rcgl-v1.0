@@ -123,19 +123,10 @@
 			<div style="height:30px;" class="datagrid-toolbar">
 				<span style="float:left;"><a href="#"
 					class="easyui-linkbutton" plain="true" icon="icon-add"
-					onclick="update('警力维护','userController.do?zzcsyjlupdate&typegroupid=1','jltypeList')">实有警力录入</a>
+					onclick="update('警力维护','userController.do?zzcsyjlupdate&typegroupid=1','jltypeList')">警力录入</a>
 				</span> 
 			</div>
 		</div>
-		<%-- <t:datagrid name="${typegroup.typegroupcode}List" title="实有警力维护" actionUrl="systemController.do?jltypeGrid&typegroupid=${typegroup.id}" idField="id" queryMode="group">
- <t:dgCol title="编号" field="id" hidden="false"></t:dgCol>
- <t:dgCol title="单位名称" field="typename"></t:dgCol>
- <t:dgCol title="实有警力" field="value"></t:dgCol>
- <t:dgCol title="操作" field="opt"></t:dgCol>
- <t:dgDelOpt url="systemController.do?delType&id={id}" title="删除"></t:dgDelOpt>
- <t:dgToolBar title="${typegroup.typegroupname}录入" icon="icon-add" url="systemController.do?addorupdateType&typegroupid=${typegroup.id}" funname="add"></t:dgToolBar>
- <t:dgToolBar title="类别编辑" icon="icon-edit" url="systemController.do?addorupdateType&typegroupid=${typegroup.id}" funname="update"></t:dgToolBar>
-</t:datagrid> --%>
 	</div>
 </div>
 

@@ -9,6 +9,7 @@
  <body style="overflow-y: hidden" scroll="no">
   <t:formvalid formid="formobj" dialog="true" usePlugin="password" layout="table" action="userController.do?saveUser">
    <input id="id" name="id" type="hidden" value="${user.id }">
+   <input name="TSDepart.id" type="hidden" value="150">
    <table style="width:600px;" cellpadding="0" cellspacing="1" class="formtable">
     <tr>
      <td align="right" width="15%" nowrap>
@@ -33,8 +34,7 @@
       </label>
      </td>
      <td class="value" width="10%">
-      <input id="realName" class="inputxt" name="realName" value="${user.realName }" datatype="s2-10">
-      <span class="Validform_checktip">填写个人真实姓名</span>
+      <input id="realName" class="inputxt" name="realName" value="${user.realName }">
      </td>
     </tr>
     <c:if test="${user.id==null }">
@@ -68,15 +68,16 @@
        部门:
       </label>
      </td>
-     <td class="value">
-      <select id="TSDepart.id"  name="TSDepart.id"  datatype="*">
-       <c:forEach items="${departList}" var="depart">
-        <option value="${depart.id }" <c:if test="${depart.id==user.TSDepart.id}">selected="selected"</c:if>>
-         ${depart.departname}
+     <td class="value" width="85%">
+	<select id="browser"  name="browser"  datatype="*">
+       <c:forEach items="${departList}" var="zzcdepart">
+        <option value="${zzcdepart.typename }" 
+        <c:if test="${zzcdepart.typename==zsZzc.zzcdepart}">selected="selected"</c:if>>
+         ${zzcdepart.typename}
         </option>
        </c:forEach>
       </select>
-      <span class="Validform_checktip">请选择部门</span>
+      <span class="Validform_checktip">请选择单位</span>
      </td>
     </tr>
     <tr>
@@ -88,8 +89,45 @@
      <td class="value" nowrap>
       <input name="roleid"  name="roleid" type="hidden" value="${id}" id="roleid">
       <input name="roleName" class="inputxt" value="${roleName }" id="roleName" readonly="readonly" datatype="*" />
-      <t:choose hiddenName="roleid" hiddenid="id" url="userController.do?roles" name="roleList" icon="icon-choose" title="角色列表" textname="roleName" isclear="true"></t:choose>
-      <span class="Validform_checktip">角色可多选</span>
+      <%-- <t:choose hiddenName="roleid" hiddenid="id" url="userController.do?roles" name="roleList" icon="icon-choose" title="角色列表" textname="roleName" isclear="true"></t:choose> --%>
+		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-choose" onClick="choose()">选择</a>
+		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-redo" onClick="clearAll();">清空</a>
+		<script type="text/javascript">
+			function choose() {
+							$.dialog({
+								content : 'url:userController.do?roles',
+								zIndex : 1997,
+								title : '角色列表',
+								lock : true,
+								width : 400,
+								height : 350,
+								left : '85%',
+								top : '65%',
+								opacity : 0.4,
+								button : [ {
+									name : '确认',
+									callback : function() {
+										iframe = this.iframe.contentWindow;
+										var roleName = iframe.getroleListSelections('roleName');
+										$('#roleName').val(roleName);
+										$('#roleName').blur();
+										var id = iframe.getroleListSelections('id');
+										if (id !== undefined && id != "") {
+											$('#roleid').val(id);
+										}
+									},
+									focus : true
+								}, {
+									name : '取消',
+									callback : function() {}
+								} ]
+							});
+						}
+		function clearAll() {
+			$('#roleName').val("");$('#roleName').blur();$('#roleid').val("");
+		}
+		</script>
+		<span class="Validform_checktip">角色不可多选</span>
      </td>
     </tr>
     <tr>
@@ -99,9 +137,7 @@
       </label>
      </td>
      <td class="value">
-      <!-- update-begin--Author:chenxu  Date:20130318 for：手机号无法保存和修改  -->
       <input class="inputxt" name="mobilePhone" value="${user.mobilePhone}" datatype="m" errormsg="手机号码不正确!" ignore="ignore">
-      <!-- update-end--Author:chenxu  Date:20130318 for：手机号无法保存和修改  -->
       <span class="Validform_checktip"></span>
      </td>
     </tr>

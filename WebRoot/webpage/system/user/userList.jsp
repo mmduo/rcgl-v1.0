@@ -1,13 +1,38 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@include file="/context/mytags.jsp"%>
-<t:datagrid name="userList" title="用户管理" actionUrl="userController.do?datagrid" fit="true" fitColumns="true" idField="id" queryMode="group">
-	<t:dgCol title="编号" field="id" hidden="false" ></t:dgCol>
-	<t:dgCol title="用户名" sortable="false" field="userName" query="true" width="20"></t:dgCol>
-	<t:dgCol title="部门" field="TSDepart_departname" query="true" queryMode="single" replace="${departsReplace}"></t:dgCol>
-	<t:dgCol title="真实姓名" field="realName" query="true" ></t:dgCol>
-	<t:dgCol title="状态" sortable="true" field="status" replace="正常_1,禁用_0,超级管理员_-1"></t:dgCol>
-	<t:dgCol title="操作" field="opt" width="100"></t:dgCol>
-	<t:dgDelOpt title="删除" url="userController.do?del&id={id}&userName={userName}" />
-	<t:dgToolBar title="用户录入" icon="icon-add" url="userController.do?addorupdate" funname="add"></t:dgToolBar>
-   <t:dgToolBar title="用户编辑" icon="icon-edit" url="userController.do?addorupdate" funname="update"></t:dgToolBar>
-</t:datagrid>
+<script type="text/javascript" src="plug-in/common/userList.js"></script>
+
+<table width="100%" id="userList" toolbar="#userListtb"></table>
+<div id="userListtb" style="padding:3px; ">
+	<div name="searchColums">
+		<span style="display:-moz-inline-box;display:inline-block;">
+			<span style="display:-moz-inline-box;display:inline-block;width: 80px;text-align:right;">单位：</span>
+			<select name="browser" style="width: 135px">
+				<option value ="" >---请选择---</option>
+				<c:forEach items="${departList}" var="zzcdepart">
+					<option value="${zzcdepart.typename }">${zzcdepart.typename}</option>
+				</c:forEach>
+			</select>
+		</span>
+		<span style="display:-moz-inline-box;display:inline-block;">
+		<span style="display:-moz-inline-box;display:inline-block;width: 80px;text-align:right;">姓名：</span>
+		<input type="text" name="realName" style="width: 100px" /></span>
+	</div>
+	<div style="height:30px;" class="datagrid-toolbar">
+		<span style="float:left;">
+		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-add"
+			onclick="add('录入','userController.do?addorupdate','userList')">录入</a>
+		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-edit"
+			onclick="update('修改','userController.do?addorupdate','userList')">修改</a>
+		<!-- <a href="#" class="easyui-linkbutton" plain="true" icon="icon-edit"
+			onclick="userList.expFiles()">当日导出</a> -->
+		<!-- <a href="#" class="easyui-linkbutton" plain="true" icon="icon-add"
+			onclick="add('批量录入','userController.do?goImplXls','userList')">批量录入</a> -->
+		</span>
+		<span style="float:right">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="userList.listSearch()">查询</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-reload"	onclick="searchReset('userList')">重置</a>
+		</span>
+	</div>
+</div>

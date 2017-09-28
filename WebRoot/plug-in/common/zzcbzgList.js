@@ -1,8 +1,8 @@
 $(function() {
-		$('#zzcyljList').datagrid({
+		$('#zzcbzgList').datagrid({
 			idField : 'id',
-			title : '十二总队民警不在岗已离京情况一览',
-			url : 'userController.do?zzcyljdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,spdate,cxtype,qwaddress,spld',
+			title : '十二总队民警不在岗情况一览',
+			url : 'userController.do?zzcbzgdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,spdate,cxtype,qwaddress,spld',
 			fit : true,
 			loadMsg : '数据加载中...',
 			pageSize : 10,
@@ -65,39 +65,39 @@ $(function() {
 			} ] ],
 			onClickRow : function(rowIndex, rowData) {
 				rowid = rowData.id;
-				gridname = 'zzcyljList';
+				gridname = 'zzcbzgList';
 			}
-		});$('#zzcyljList').datagrid('getPager').pagination({
+		});$('#zzcbzgList').datagrid('getPager').pagination({
 			beforePageText : '',
 			afterPageText : '/{pages}',
 			displayMsg : '{from}-{to}共{total}条',
 			showPageList : true,
 			pageList : [ 10, 20, 30 ],
 			showRefresh : true
-		});$('#zzcyljList').datagrid('getPager').pagination({
+		});$('#zzcbzgList').datagrid('getPager').pagination({
 			onBeforeRefresh : function(pageNumber, pageSize) {
 				$(this).pagination('loading');$(this).pagination('loaded');
 			}
 		});
 	});
-var zzcyljList = {
+var zzcbzgList = {
 		listSearch:function () {
-			var queryParams = $('#zzcyljList').datagrid('options').queryParams;
-			$('#zzcyljListtb').find('*').each(function() {
+			var queryParams = $('#zzcbzgList').datagrid('options').queryParams;
+			$('#zzcbzgListtb').find('*').each(function() {
 				queryParams[$(this).attr('name')] = $(this).val();
 			});
-			$('#zzcyljList').datagrid({
-				url : "userController.do?zzcyljdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,spdate,cxtype,qwaddress,spld"
+			$('#zzcbzgList').datagrid({
+				url : "userController.do?zzcbzgdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,spdate,cxtype,qwaddress,spld"
 			});
 		},
 		expFiles:function(){
-			var queryParams = $('#zzcyljList').datagrid('options').queryParams;
-			var zzcyljqdate = $("[name=zzcyljqdate]").val();
+			var queryParams = $('#zzcbzgList').datagrid('options').queryParams;
+			var zzcbzgqdate = $("[name=zzcbzgqdate]").val();
 			$.ajax({
 				async : false,
 				cache : false,
 				type : 'POST',
-				url : 'jeecgJdbcController.do?zzcyljexpFiles&zzcyljqdate='+zzcyljqdate,// 请求的action路径
+				url : 'jeecgJdbcController.do?zzcbzgexpFiles&zzcbzgqdate='+zzcbzgqdate,// 请求的action路径
 				error : function() {// 请求失败处理函数
 				},
 				success : function(data) {
@@ -109,15 +109,15 @@ var zzcyljList = {
 							timeout : 2000,
 							showType : 'slide'
 						});
-						$('#zzcyljList').datagrid('reload');
+						$('#zzcbzgList').datagrid('reload');
 					}
 				}
 			})
 		},
 		expExcelFiles:function(){
-			var queryParams = $('#zzcyljList').datagrid('options').queryParams;
-			var zzcyljqdate = $("[name=zzcyljqdate]").val();
-			window.location.href="jeecgJdbcController.do?zzcyljexpExcelFiles&zzcyljqdate="+zzcyljqdate;// 请求的action路径;
+			var queryParams = $('#zzcbzgList').datagrid('options').queryParams;
+			var zzcbzgqdate = $("[name=zzcbzgqdate]").val();
+			window.location.href="jeecgJdbcController.do?zzcbzgexpExcelFiles&zzcbzgqdate="+zzcbzgqdate;// 请求的action路径;
 		}
 	};
 function searchReset(name) {

@@ -8,12 +8,14 @@
 	<div name="searchColums">
 		<span style="display:-moz-inline-box;display:inline-block;">
 		<span style="display:-moz-inline-box;display:inline-block;width: 80px;text-align:right;">日期：</span>
-			<input name="qdate" class="easyui-datebox"></span>
+			<input name="zzcbzgqdate" class="easyui-datebox"></span>
 	</div>
 	<div style="height:30px;" class="datagrid-toolbar">
 		<span style="float:left;">
 		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-edit"
 			onclick="zzcbzgList.expFiles()">导出</a>
+		<a href="#" class="easyui-linkbutton" plain="true" icon="icon-edit"
+			onclick="zzcbzgList.expExcelFiles()">导出excel</a>
 		</span>
 		<span style="float:right">
 		<a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="zzcbzgList.listSearch()">查询</a>

@@ -108,7 +108,7 @@ public class LoginController {
 				session.setMaxInactiveInterval(60 * 30);
 				session.setAttribute(Globals.USER_SESSION, sessionInfo);
 				// 添加登陆日志
-				systemService.addLog(message, Globals.Log_Type_LOGIN, Globals.Log_Leavel_INFO);
+				//systemService.addLog(message, Globals.Log_Type_LOGIN, Globals.Log_Leavel_INFO);
 
 			} else {
 				j.setMsg("请检查U盾是否正确");
@@ -177,7 +177,7 @@ public class LoginController {
 		
 		// 判断用户是否为空不为空则清空session中的用户object
 		session.removeAttribute(Globals.USER_SESSION);// 注销该操作用户
-		systemService.addLog("用户" + user.getUserName() + "已退出", Globals.Log_Type_EXIT, Globals.Log_Leavel_INFO);
+		//systemService.addLog("用户" + user.getUserName() + "已退出", Globals.Log_Type_EXIT, Globals.Log_Leavel_INFO);
 		modelAndView = new ModelAndView(new RedirectView("loginController.do?login"));
 
 		return modelAndView;

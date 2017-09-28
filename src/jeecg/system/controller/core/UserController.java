@@ -27,6 +27,7 @@ import jeecg.system.pojo.base.TSUser;
 import jeecg.system.pojo.base.ZSDoc;
 import jeecg.system.pojo.base.ZSType;
 import jeecg.system.pojo.base.ZSZzc;
+import jeecg.system.pojo.base.ZSZzcDel;
 import jeecg.system.service.SystemService;
 import jeecg.system.service.UserService;
 import net.sf.json.JSONObject;
@@ -53,6 +54,7 @@ import org.jeecgframework.tag.core.easyui.TagUtil;
 import org.jeecgframework.tag.vo.datatable.DataTableReturn;
 import org.jeecgframework.tag.vo.datatable.DataTables;
 import org.jeecgframework.tag.vo.datatable.SortDirection;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -154,8 +156,8 @@ public class UserController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(params = "user")
-	public String user(HttpServletRequest request) {
+	@RequestMapping(params = "user1")
+	public String user1(HttpServletRequest request) {
 		// ----------------------------------------------------------------
 		// update-begin--Author:Quainty Date:20130529 for：用户管理，添加按照部门过滤的功能
 		// 给部门查询条件中的下拉框准备数据
@@ -206,6 +208,34 @@ public class UserController {
 	@RequestMapping(params = "savenewpwd")
 	@ResponseBody
 	public AjaxJson savenewpwd(HttpServletRequest request) {
+		AjaxJson j = new AjaxJson();
+		TSUser user = ResourceUtil.getSessionUserName();
+		String password = oConvertUtils.getString(request.getParameter("password"));
+		String newpassword = oConvertUtils.getString(request.getParameter("newpassword"));
+		String pString = password;
+		if (!pString.equals(user.getPassword())) {
+			j.setMsg("原密码不正确");
+			j.setSuccess(false);
+		} else {
+			try {
+				user.setPassword(newpassword);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			systemService.updateEntitie(user);
+			j.setMsg("修改成功");
+
+		}
+		return j;
+	}
+	/**
+	 * 修改密码
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "savenewpwd1")
+	@ResponseBody
+	public AjaxJson savenewpwd1(HttpServletRequest request) {
 		AjaxJson j = new AjaxJson();
 		TSUser user = ResourceUtil.getSessionUserName();
 		String password = oConvertUtils.getString(request.getParameter("password"));
@@ -281,8 +311,8 @@ public class UserController {
 	 * @param response
 	 * @param dataGrid
 	 */
-	@RequestMapping(params = "datagrid")
-	public void datagrid(TSUser user, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+	@RequestMapping(params = "datagrid1")
+	public void datagrid1(TSUser user, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
 		CriteriaQuery cq = new CriteriaQuery(TSUser.class, dataGrid);
 		// 查询条件组装器
 		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, user);
@@ -400,9 +430,9 @@ public class UserController {
 	 * @return
 	 */
 
-	@RequestMapping(params = "saveUser")
+	@RequestMapping(params = "saveUser1")
 	@ResponseBody
-	public AjaxJson saveUser(HttpServletRequest req, TSUser user) {
+	public AjaxJson saveUser1(HttpServletRequest req, TSUser user) {
 		AjaxJson j = new AjaxJson();
 		// 得到用户的角色
 		String roleid = oConvertUtils.getString(req.getParameter("roleid"));
@@ -492,8 +522,8 @@ public class UserController {
 	 * @param dataGrid
 	 * @param user
 	 */
-	@RequestMapping(params = "addorupdate")
-	public ModelAndView addorupdate(TSUser user, HttpServletRequest req) {
+	@RequestMapping(params = "addorupdate1")
+	public ModelAndView addorupdate1(TSUser user, HttpServletRequest req) {
 		List<TSDepart> departList = systemService.getList(TSDepart.class);
 		req.setAttribute("departList", departList);
 		if (StringUtil.isNotEmpty(user.getId())) {
@@ -837,27 +867,27 @@ public class UserController {
 
 		if (zsZzc.getFjdate() != null) {
 			String fjdate = oConvertUtils.getString(zsZzc.getFjdate().replace("-", "").trim());
-			cq.eq("fjdate", fjdate);
+//			cq.eq("fjdate", fjdate);
 			zsZzc.setFjdate(fjdate);
 		}
 		if (zsZzc.getJsdate() != null) {
 			String jsdate = oConvertUtils.getString(zsZzc.getJsdate().replace("-", "").trim());
-			cq.eq("jsdate", jsdate);
+//			cq.eq("jsdate", jsdate);
 			zsZzc.setJsdate(jsdate);
 		}
 		if (zsZzc.getKsdate() != null) {
 			String ksdate = oConvertUtils.getString(zsZzc.getKsdate().replace("-", "").trim());
-			cq.eq("ksdate", ksdate);
+//			cq.eq("ksdate", ksdate);
 			zsZzc.setKsdate(ksdate);
 		}
 		if (zsZzc.getLjdate() != null) {
 			String ljdate = oConvertUtils.getString(zsZzc.getLjdate().replace("-", "").trim());
-			cq.eq("ljdate", ljdate);
+//			cq.eq("ljdate", ljdate);
 			zsZzc.setLjdate(ljdate);
 		}
 		if (zsZzc.getSpdate() != null) {
 			String spdate = oConvertUtils.getString(zsZzc.getSpdate().replace("-", "").trim());
-			cq.eq("spdate", spdate);
+//			cq.eq("spdate", spdate);
 			zsZzc.setSpdate(spdate);
 		}
 		cq.addOrder("zzcdepart", SortDirection.asc);
@@ -883,6 +913,7 @@ public class UserController {
 
 		if(u.getBrowser() != null && !"".equals(u.getBrowser())){
 			request.setAttribute("departList" , u.getBrowser().trim());
+			cq.eq("zzcdepart", u.getBrowser().trim());
 		}
 		if (zsZzc.getFjdate() != null) {
 			String fjdate = oConvertUtils.getString(zsZzc.getFjdate().replace("-", "").trim());
@@ -928,8 +959,8 @@ public class UserController {
 	public void zzcyljdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
 			throws ParseException {
 		String qdate = "";
-		if (request.getParameter("qdate") != null && !"".equals(request.getParameter("qdate"))) {
-			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+		if (request.getParameter("zzcyljqdate") != null && !"".equals(request.getParameter("zzcyljqdate"))) {
+			qdate = oConvertUtils.getString(request.getParameter("zzcyljqdate").replace("-", "").trim());
 			JSONObject jObject1 = this.jeecgJdbcService.getZzcDatagridylj1(zsZzc, dataGrid, qdate);
 			responseDatagrid(response, jObject1);
 		}
@@ -946,8 +977,8 @@ public class UserController {
 	public void zzcwljdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
 			throws ParseException {
 		String qdate = "";
-		if (request.getParameter("qdate") != null && !"".equals(request.getParameter("qdate"))) {
-			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+		if (request.getParameter("zzcwljqdate") != null && !"".equals(request.getParameter("zzcwljqdate"))) {
+			qdate = oConvertUtils.getString(request.getParameter("zzcwljqdate").replace("-", "").trim());
 			JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridwlj1(zsZzc, dataGrid, qdate);
 			responseDatagrid(response, jObject2);
 		}
@@ -964,8 +995,8 @@ public class UserController {
 	public void zzcnljdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
 			throws ParseException {
 		String qdate = "";
-		if (request.getParameter("qdate") != null && !"".equals(request.getParameter("qdate"))) {
-			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+		if (request.getParameter("zzcnljqdate") != null && !"".equals(request.getParameter("zzcnljqdate"))) {
+			qdate = oConvertUtils.getString(request.getParameter("zzcnljqdate").replace("-", "").trim());
 			JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridnlj1(zsZzc, dataGrid, qdate);
 			responseDatagrid(response, jObject2);
 		}
@@ -981,8 +1012,8 @@ public class UserController {
 	public void zzcbzgdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
 			throws ParseException {
 		String qdate = "";
-		if (request.getParameter("qdate") != null && !"".equals(request.getParameter("qdate"))) {
-			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+		if (request.getParameter("zzcbzgqdate") != null && !"".equals(request.getParameter("zzcbzgqdate"))) {
+			qdate = oConvertUtils.getString(request.getParameter("zzcbzgqdate").replace("-", "").trim());
 			JSONObject jObject2 = this.jeecgJdbcService.getZzcDatagridbzg1(zsZzc, dataGrid, qdate);
 			responseDatagrid(response, jObject2);
 		}
@@ -999,8 +1030,8 @@ public class UserController {
 	public void zzchzdatagrid(ZSZzc zsZzc, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid)
 			throws ParseException {
 		String qdate = "";
-		if (request.getParameter("qdate") != null && !"".equals(request.getParameter("qdate"))) {
-			qdate = oConvertUtils.getString(request.getParameter("qdate").replace("-", "").trim());
+		if (request.getParameter("zzchzqdate") != null && !"".equals(request.getParameter("zzchzqdate"))) {
+			qdate = oConvertUtils.getString(request.getParameter("zzchzqdate").replace("-", "").trim());
 			JSONObject jObject3 = this.jeecgJdbcService.getZzcDatagridhz1(zsZzc, dataGrid, qdate);
 			responseDatagrid(response, jObject3);
 		}
@@ -1024,7 +1055,7 @@ public class UserController {
 		List<ZSType> zwList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "2");
 		Collections.sort(zwList);
 		req.setAttribute("zwList", zwList);
-
+		
 		/*************** Upd By ZM 20170918 input改为 checkbox Start *************/
 		/** 不在岗种类列表  **/
 		List<ZSType> bzgzlList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "3");
@@ -1035,12 +1066,12 @@ public class UserController {
 		Collections.sort(cxtypeList);
 		req.setAttribute("cxtypeList" , cxtypeList);
 		
+		/***************  Upd By ZM 20170918 input改为 checkbox End  *************/
+
 		if (StringUtil.isNotEmpty(zsZzc.getId())) {
 			zsZzc = systemService.getEntity(ZSZzc.class, zsZzc.getId());
 			req.setAttribute("zsZzc", zsZzc);
 		}
-		/***************  Upd By ZM 20170918 input改为 checkbox End  *************/
-		
 		return new ModelAndView("system/user/zsZzc");
 	}
 	/**
@@ -1102,11 +1133,6 @@ public class UserController {
 	public AjaxJson zzcsaveUser(HttpServletRequest req, ZSZzc zsZzc) {
 		AjaxJson j = new AjaxJson();
 		// 得到用户的角色
-		/*
-		 * String roleid = oConvertUtils.getString(req.getParameter("roleid"));
-		 * String password =
-		 * oConvertUtils.getString(req.getParameter("password"));
-		 */
 		if (StringUtil.isNotEmpty(zsZzc.getId())) {
 			ZSZzc zsZzcs = systemService.getEntity(ZSZzc.class, zsZzc.getId());
 			zsZzcs.setZzcdepart(zsZzc.getZzcdepart().trim());
@@ -1139,16 +1165,26 @@ public class UserController {
 			}
 			if (zsZzc.getNote() != null && !"".equals(zsZzc.getNote())) {
 				zsZzcs.setNote(zsZzc.getNote().trim());
+			}	
+			
+			/***** Upd By ZM 20170924增加重复记录check start******/
+			Boolean isDuplicate = this.jeecgJdbcService.checkDuplicate(zsZzcs);
+			if(!isDuplicate){
+				message = "民警: " + zsZzcs.getName() + "休假时间重复，更新失败！！";
+				j.setMsg(message);
+				return j;
+			} else {
+				
+				systemService.updateEntitie(zsZzcs);
+	
+				message = "民警: " + zsZzcs.getName() + "不在岗情况更新成功";
+				/*
+				 * if (StringUtil.isNotEmpty(roleid)) { saveRoleUser(users, roleid);
+				 * }
+				 */
+				systemService.addLog(message, Globals.Log_Type_LOGIN, Globals.Log_Leavel_INFO);
 			}
-
-			systemService.updateEntitie(zsZzcs);
-
-			message = "民警: " + zsZzcs.getName() + "不在岗情况更新成功";
-			/*
-			 * if (StringUtil.isNotEmpty(roleid)) { saveRoleUser(users, roleid);
-			 * }
-			 */
-			systemService.addLog(message, Globals.Log_Type_UPDATE, Globals.Log_Leavel_INFO);
+			/***** Upd By ZM 20170924增加重复记录check end******/
 		} else {
 			zsZzc.setSpdate(oConvertUtils.getString(zsZzc.getSpdate().replace("-", "").trim()));
 			zsZzc.setKsdate(oConvertUtils.getString(zsZzc.getKsdate().replace("-", "").trim()));
@@ -1167,10 +1203,19 @@ public class UserController {
 			} else {
 				zsZzc.setJsdate("99999999");
 			}
-			
-			systemService.save(zsZzc);
-			message = "民警: " + zsZzc.getName() + "不在岗情况添加成功";
-			systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);
+
+			/***** Upd By ZM 20170924 增加重复记录check start******/
+			Boolean isDuplicate = this.jeecgJdbcService.checkDuplicate(zsZzc);
+			if(!isDuplicate){
+				message = "民警: " + zsZzc.getName() + "休假时间重复，添加失败！！！";
+				j.setMsg(message);
+				return j;
+			} else {
+				systemService.save(zsZzc);
+				message = "民警: " + zsZzc.getName() + "不在岗情况添加成功";
+				systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);
+			}
+			/***** Upd By ZM 20170924 增加重复记录check end******/
 
 		}
 		j.setMsg(message);
@@ -1256,11 +1301,133 @@ public class UserController {
 		if (req.getParameter("zzcid") != null && !"".equals(req.getParameter("zzcid"))) {
 			zzcid = oConvertUtils.getString(req.getParameter("zzcid").trim());
 			zsZzc = systemService.getEntity(ZSZzc.class, zzcid);
-			message = "记录删除成功";
+			ZSZzcDel zsZzcDle = new ZSZzcDel();
+			BeanUtils.copyProperties(zsZzc,zsZzcDle);
+			message = "记录"+zsZzc.getZzcdepart()+""+zsZzc.getName()+""+zsZzc.getBzgzl()+"删除成功";
+			systemService.addLog(message, Globals.Log_Type_LOGIN, Globals.Log_Leavel_INFO);
+			systemService.save(zsZzcDle);
 			systemService.delete(zsZzc);
 		}
 				
 		j.setMsg(message);
+		return j;
+	}
+	
+	/**
+	 * 用户列表页面跳转
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "user")
+	public String user(HttpServletRequest request) {
+		List<ZSType> departList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "1");
+		Collections.sort(departList);
+		request.setAttribute("departList" , departList);
+		
+		List<ZSType> zwList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "2");
+		Collections.sort(zwList);
+		request.setAttribute("zwList" , zwList);
+		
+		return "system/user/userList";
+	}
+	/**
+	 * easyuiAJAX请求数据： 用户选择角色列表
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 * @param user
+	 */
+	@RequestMapping(params = "addorupdate")
+	public ModelAndView addorupdate(TSUser user, HttpServletRequest req) {
+		List<ZSType> departList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "1");
+		Collections.sort(departList);
+		req.setAttribute("departList", departList);
+		
+		List<ZSType> zwList = systemService.findByProperty(ZSType.class, "ZSTypegroup.id", "2");
+		Collections.sort(zwList);
+		req.setAttribute("zwList", zwList);
+
+		if (StringUtil.isNotEmpty(user.getId())) {
+			user = systemService.getEntity(TSUser.class, user.getId());
+			req.setAttribute("user", user);
+			idandname(req, user);
+		}
+		return new ModelAndView("system/user/user");
+	}
+	/**
+	 * easyuiAJAX用户列表请求数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 */
+	@RequestMapping(params = "datagrid")
+	public void datagrid(TSUser user, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+		CriteriaQuery cq = new CriteriaQuery(TSUser.class, dataGrid);
+		// 查询条件组装器
+		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, user);
+		
+		Short[] userstate = new Short[] { Globals.User_Normal, Globals.User_ADMIN };
+		cq.in("status", userstate);
+		cq.add();
+		this.systemService.getDataGridReturn(cq, true);
+		TagUtil.datagrid(response, dataGrid);
+	}
+	/**
+	 * 用户录入
+	 * 
+	 * @param user
+	 * @param req
+	 * @return
+	 */
+
+	@RequestMapping(params = "saveUser")
+	@ResponseBody
+	public AjaxJson saveUser(HttpServletRequest req, TSUser user) {
+		AjaxJson j = new AjaxJson();
+		// 得到用户的角色
+		String roleid = oConvertUtils.getString(req.getParameter("roleid"));
+		String password = oConvertUtils.getString(req.getParameter("password"));
+		if (StringUtil.isNotEmpty(user.getId())) {
+			TSUser users = systemService.getEntity(TSUser.class, user.getId());
+			users.setEmail(user.getEmail());
+			users.setOfficePhone(user.getOfficePhone());
+			users.setMobilePhone(user.getMobilePhone());
+			users.setTSDepart(user.getTSDepart());
+			users.setRealName(user.getRealName());
+			users.setStatus(Globals.User_Normal);
+			users.setActivitiSync(user.getActivitiSync());
+			systemService.updateEntitie(users);
+			List<TSRoleUser> ru = systemService.findByProperty(TSRoleUser.class, "TSUser.id", user.getId());
+			systemService.deleteAllEntitie(ru);
+			message = "用户: " + users.getUserName() + "更新成功";
+			if (StringUtil.isNotEmpty(roleid)) {
+				saveRoleUser(users, roleid);
+			}
+			systemService.addLog(message, Globals.Log_Type_UPDATE, Globals.Log_Leavel_INFO);
+		} else {
+			TSUser users = systemService.findUniqueByProperty(TSUser.class, "userName", user.getUserName());
+			if (users != null) {
+				message = "用户: " + users.getUserName() + "已经存在";
+			} else {
+				//user.setPassword(PasswordUtil.encrypt(user.getUserName(), password, PasswordUtil.getStaticSalt()));
+				user.setPassword(password);
+				if (user.getTSDepart().equals("")) {
+					user.setTSDepart(null);
+				}
+				user.setStatus(Globals.User_Normal);
+				systemService.save(user);
+				message = "用户: " + user.getUserName() + "添加成功";
+				if (StringUtil.isNotEmpty(roleid)) {
+					saveRoleUser(user, roleid);
+				}
+				systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);
+			}
+
+		}
+		j.setMsg(message);
+
 		return j;
 	}
 }

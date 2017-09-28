@@ -1,8 +1,8 @@
 $(function() {
-		$('#zzcList').datagrid({
+		$('#zzcmjList').datagrid({
 			idField : 'id',
-			title : '不在岗管理综合',
-			url : 'userController.do?zzcdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,ksdate,jsdate,qwaddress',
+			title : '民警不在岗管理',
+			url : 'userController.do?zzcmjdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,spdate,cxtype,qwaddress,',
 			fit : true,
 			loadMsg : '数据加载中...',
 			pageSize : 10,
@@ -20,52 +20,46 @@ $(function() {
 			{field : 'bzgzl',title : '不在岗种类',width : 55,sortable : true}, 
 			{field : 'ljdate',title : '离京日期',width : 60,sortable : true}, 
 			{field : 'fjdate',title : '返京日期',width : 60,sortable : true}, 
-			{field : 'ksdate',title : '开始日期',width : 60,sortable : true}, 
-			{field : 'jsdate',title : '结束日期',width : 60,sortable : true}, 
-			{field : 'qwaddress',title : '前往地点',width : 60,sortable : true}/* ,
+			{field : 'spdate',title : '审批日期',width : 60,sortable : true}, 
+			{field : 'cxtype',title : '出行方式',width : 60,sortable : true}, 
+			{field : 'qwaddress',title : '前往地点',width : 60,sortable : true} ,
 			{field : 'null',title : '操作',width : 50,
 				formatter : function(value, rec, index) {
 					if (!rec.id) {
 						return '';
 					}
 					var href = '';
-					href += "[<a href='#' onclick=zzcList.del('"+rec.id+"')>删除</a>]";
+					href += "[<a href='#' onclick=zzcmjList.del('"+rec.id+"')>删除</a>]";
 					return href;
-			}}*/] ],
+			}}] ],
 			onClickRow : function(rowIndex, rowData) {
 				rowid = rowData.id;
-				gridname = 'zzcList';
+				gridname = 'zzcmjList';
 			}
-		});$('#zzcList').datagrid('getPager').pagination({
+		});$('#zzcmjList').datagrid('getPager').pagination({
 			beforePageText : '',
 			afterPageText : '/{pages}',
 			displayMsg : '{from}-{to}共{total}条',
 			showPageList : true,
 			pageList : [ 10, 20, 30 ],
 			showRefresh : true
-		});$('#zzcList').datagrid('getPager').pagination({
+		});$('#zzcmjList').datagrid('getPager').pagination({
 			onBeforeRefresh : function(pageNumber, pageSize) {
 				$(this).pagination('loading');$(this).pagination('loaded');
 			}
 		});
 	});
-var zzcList = {
+var zzcmjList = {
 		listSearch:function () {
-			var queryParams = $('#zzcList').datagrid('options').queryParams;
-			$('#zzcListtb').find('*').each(function() {
+			var queryParams = $('#zzcmjList').datagrid('options').queryParams;
+			$('#zzcmjListtb').find('*').each(function() {
 				queryParams[$(this).attr('name')] = $(this).val();
 			});
-			$('#zzcList').datagrid({
-				url : "userController.do?zzcdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,ksdate,jsdate,qwaddress"
+			$('#zzcmjList').datagrid({
+				url : "userController.do?zzcmjdatagrid&field=id,zzcdepart,name,zw,bzgzl,ljdate,fjdate,spdate,cxtype,qwaddress"
 			});
 		},
-		del:function () {
-			var rowData = $('#zzcList').datagrid('getSelected');
-			if (!rowData) {
-				tip('请选择编辑项目');
-				return;
-			}
-			var id = rowData.id;
+		del:function (id) {
 			$.messager.confirm('提示','是否删除', function(r){
 				if (r){
 					$.ajax({
@@ -78,7 +72,7 @@ var zzcList = {
 						},
 						success: function(d){
 							$.messager.alert('提示',d.msg,'info');
-							$('#zzcList').datagrid('reload');
+							$('#zzcmjList').datagrid('reload');
 						}
 					});
 				}
@@ -124,7 +118,7 @@ var zzcList = {
 							timeout : 2000,
 							showType : 'slide'
 						});
-						$('#zzcList').datagrid('reload');
+						$('#zzcmjList').datagrid('reload');
 					}
 				}
 			})
@@ -133,10 +127,10 @@ var zzcList = {
 	function reloadTable() {
 		$('#' + gridname).datagrid('reload');
 	}
-	function reloadzzcList() {
-		$('#zzcList').datagrid('reload');
+	function reloadzzcmjList() {
+		$('#zzcmjList').datagrid('reload');
 	}
-	function getzzcListSelected(field) {
+	function getzzcmjListSelected(field) {
 		return getSelected(field);
 	}
 	function getSelected(field) {
@@ -149,26 +143,26 @@ var zzcList = {
 		}
 		return value;
 	}
-	function getzzcListSelections(field) {
+	function getzzcmjListSelections(field) {
 		var ids = [];
-		var rows = $('#zzcList').datagrid('getSelections');
+		var rows = $('#zzcmjList').datagrid('getSelections');
 		for (var i = 0; i < rows.length; i++) {
 			ids.push(rows[i][field]);
 		}
 		ids.join(',');return ids
 	};
-	function zzcListsearchbox(value, name) {
-		var queryParams = $('#zzcList').datagrid('options').queryParams;
+	function zzcmjListsearchbox(value, name) {
+		var queryParams = $('#zzcmjList').datagrid('options').queryParams;
 		queryParams[name] = value;
-		queryParams.searchfield = name;$('#zzcList').datagrid('reload');
+		queryParams.searchfield = name;$('#zzcmjList').datagrid('reload');
 	}
-	$('#zzcListsearchbox').searchbox({
+	$('#zzcmjListsearchbox').searchbox({
 		searcher : function(value, name) {
-			zzcListsearchbox(value, name);
+			zzcmjListsearchbox(value, name);
 		},
-		menu : '#zzcListmm',
+		menu : '#zzcmjListmm',
 		prompt : '请输入查询关键字'
 	});
 	function searchReset(name) {
-		$("#" + name + "tb").find(":input").val("");zzcListsearch();
+		$("#" + name + "tb").find(":input").val("");zzcmjListsearch();
 	}
